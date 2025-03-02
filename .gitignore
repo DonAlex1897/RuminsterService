@@ -1,0 +1,16 @@
+# Ignore environment files that may contain secrets
+*.env
+appsettings.json
+appsettings.Development.json
+secrets.json
+
+# Ignore private key files
+*.pfx
+*.pem
+*.key
+
+# Ignore user-specific configurations
+.vscode/
+.idea/
+*.suo
+*.user

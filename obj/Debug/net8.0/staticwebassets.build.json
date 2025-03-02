@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "RbWIqDBxDudcyQQXbLG/JIjHHTrxPVx6OdWLY25NDnM=",
+  "Source": "RuminsterBackend",
+  "BasePath": "_content/RuminsterBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
