@@ -1,7 +1,0 @@
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.csproj.AssemblyReference.cache
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.GeneratedMSBuildEditorConfig.editorconfig
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.AssemblyInfoInputs.cache
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.AssemblyInfo.cs
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.csproj.CoreCompileInputs.cache
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.MvcApplicationPartsAssemblyInfo.cs
-C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net9.0\RuminsterBackend.MvcApplicationPartsAssemblyInfo.cache
