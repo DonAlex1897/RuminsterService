@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using RuminsterBackend.Data;
 using RuminsterBackend.Data.DataSeed;
 using RuminsterBackend.Middleware;
+using RuminsterBackend.Models;
 using RuminsterBackend.Services;
 using RuminsterBackend.Services.Interfaces;
 using System.Security.Claims;
@@ -17,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? string.Empty);
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<RuminsterDbContext>()
     .AddDefaultTokenProviders();
 
@@ -97,7 +98,7 @@ var app = builder.Build();
 // Initialize roles (if they don't exist)
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
     await RoleInitializer.InitializeRoles(roleManager);
 }
 

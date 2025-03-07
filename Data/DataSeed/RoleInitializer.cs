@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using RuminsterBackend.Models;
 
 namespace RuminsterBackend.Data.DataSeed
 {
     public static class RoleInitializer
     {
-        public static async Task InitializeRoles(RoleManager<IdentityRole> roleManager)
+        public static async Task InitializeRoles(RoleManager<Role> roleManager)
         {
             var roles = new[] { "Admin", "User", "Moderator" };
 
@@ -17,7 +18,7 @@ namespace RuminsterBackend.Data.DataSeed
                 var roleExist = await roleManager.RoleExistsAsync(role);
                 if (!roleExist)
                 {
-                    await roleManager.CreateAsync(new IdentityRole(role));
+                    await roleManager.CreateAsync(new Role() { Name = role });
                 }
             }
         }

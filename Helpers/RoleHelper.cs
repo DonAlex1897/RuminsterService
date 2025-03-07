@@ -8,14 +8,14 @@ namespace RuminsterBackend.Helpers
 {
     public static class RoleHelper
     {
-        public static string GetRoleName(Role role)
+        public static string GetRoleName(RoleType role)
         {
             return role.ToString();
         }
 
-        public static Role GetRoleFromString(string role)
+        public static RoleType GetRoleFromString(string role)
         {
-            return Enum.TryParse<Role>(role, out var parsedRole) ? parsedRole : Role.User;
+            return Enum.TryParse<RoleType>(role, out var parsedRole) ? parsedRole : RoleType.User;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace RuminsterBackend.Models
 
         public string UserId { get; set; }
 
-        public IdentityUser User { get; set; }
+        public User User { get; set; }
 
         public string Token  { get; set; }
 

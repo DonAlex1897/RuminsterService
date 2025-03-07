@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ce3de7d943e90599af2a3921576ea650e3438b3")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

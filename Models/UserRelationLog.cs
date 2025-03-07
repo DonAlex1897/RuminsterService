@@ -15,11 +15,11 @@ namespace RuminsterBackend.Models
 
         public string InitiatorId { get; set; }
 
-        public IdentityUser Initiator { get; set; }
+        public User Initiator { get; set; }
 
         public string ReceiverId { get; set; }
 
-        public IdentityUser Receiver { get; set; }
+        public User Receiver { get; set; }
 
         public bool IsAccepted { get; set; }
 
@@ -29,7 +29,7 @@ namespace RuminsterBackend.Models
 
         public string CreateById { get; set; }
 
-        public IdentityUser CreateBy { get; set; }
+        public User CreateBy { get; set; }
 
         public DateTime CreateTMS { get; set; }
     }

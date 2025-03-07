@@ -121,3 +121,4 @@ C:\Projects\Ruminster\RuminsterBackend\bin\Debug\net8.0\System.Linq.Dynamic.Core
 C:\Projects\Ruminster\RuminsterBackend\bin\Debug\net8.0\RuminsterBackend.staticwebassets.endpoints.json
 C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net8.0\staticwebassets\msbuild.RuminsterBackend.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Projects\Ruminster\RuminsterBackend\obj\Debug\net8.0\RuminsterBackend.sourcelink.json

@@ -14,11 +14,11 @@ namespace RuminsterBackend.Models
 
         public string CreateById { get; set; }
 
-        public IdentityUser CreateBy { get; set; }
+        public User CreateBy { get; set; }
 
         public string UpdateById { get; set; }
 
-        public IdentityUser UpdateBy { get; set; }
+        public User UpdateBy { get; set; }
 
         public DateTime CreateTMS { get; set; }
 

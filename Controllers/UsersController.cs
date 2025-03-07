@@ -25,7 +25,7 @@ namespace RuminsterBackend.Controllers
             return Ok(response);
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("UserRoles")]
         public async Task<ActionResult<UserResponse>> PostUserRolesAsync([FromBody] PostUserRolesDto dto)
         {

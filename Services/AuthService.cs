@@ -4,17 +4,18 @@ using RuminsterBackend.Exceptions;
 using RuminsterBackend.Models;
 using RuminsterBackend.Models.DTOs.Auth;
 using RuminsterBackend.Models.DTOs.User;
+using RuminsterBackend.Models.Enums;
 using RuminsterBackend.Services.Interfaces;
 
 namespace RuminsterBackend.Services
 {
     public class AuthService(
         IRequestContextService contextService,
-        UserManager<IdentityUser> userManager,
+        UserManager<User> userManager,
         ITokenService tokenService) : IAuthService
     {
         private readonly IRequestContextService _contextService = contextService;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<User> _userManager = userManager;
         private readonly ITokenService _tokenService = tokenService;
 
         public async Task<LoginResponse> SignUpAsync(PostSignUpDto dto)
@@ -26,8 +27,8 @@ namespace RuminsterBackend.Services
             if (await _userManager.FindByEmailAsync(dto.Email) != null)
                 throw new ForbiddenException("Email is already registered.");
 
-            // Create a new IdentityUser
-            var user = new IdentityUser
+            // Create a new User
+            var user = new User
             {
                 UserName = dto.Username,
                 Email = dto.Email
@@ -57,6 +58,18 @@ namespace RuminsterBackend.Services
             await _contextService.Context.RefreshTokens.AddAsync(newRefreshTokenEntry);
             await _contextService.Context.SaveChangesAsync();
 
+            if (!await _userManager.IsInRoleAsync(user, RoleType.User.ToString()))
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, RoleType.User.ToString());
+                if (!roleResult.Succeeded)
+                {
+                    throw new IdentityOperationException("Failed to assign role.", roleResult.Errors);
+                }
+            }
+
+            // Get user roles
+            var roles = await _userManager.GetRolesAsync(user);
+            
             // Return the login response
             return new LoginResponse
             {
@@ -67,7 +80,8 @@ namespace RuminsterBackend.Services
                 {
                     Id = user.Id,
                     Username = user.UserName!,
-                    Email = user.Email
+                    Email = user.Email,
+                    Roles = [.. roles],
                 }
             };
         }

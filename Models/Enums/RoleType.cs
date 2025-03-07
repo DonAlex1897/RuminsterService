@@ -1,6 +1,6 @@
 namespace RuminsterBackend.Models.Enums
 {
-    public enum Role
+    public enum RoleType
     {
         Admin,
         User,

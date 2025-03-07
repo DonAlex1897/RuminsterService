@@ -1,18 +1,17 @@
 
 namespace RuminsterBackend.Models.DTOs.User
 {
-    using Microsoft.AspNetCore.Identity;
-
+    using RuminsterBackend.Models;
     public static class UserMapper
     {
-        public static UserResponse MapUserResponse(IdentityUser user, List<string>? roles = null)
+        public static UserResponse MapUserResponse(User user)
         {
             return new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email ?? string.Empty,
                 Username = user.UserName ?? string.Empty,
-                Roles = roles,
+                Roles = user.UserRoles?.Select(ur => ur.Role?.Name ?? string.Empty).ToList() ?? [],
             };
         }
     }

@@ -7,14 +7,13 @@ using RuminsterBackend.Models;
 
 namespace RuminsterBackend.Data
 {
-    public class RuminsterDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+    public class RuminsterDbContext : IdentityDbContext<User, Role, string>
     {
         public RuminsterDbContext(DbContextOptions<RuminsterDbContext> options)
             : base(options)
         {
         }
-
-
+        
         public DbSet<Rumination> Ruminations { get; set; }
 
         public DbSet<RuminationLog> RuminationLogs { get; set; }
@@ -31,6 +30,18 @@ namespace RuminsterBackend.Data
         {
             base.OnModelCreating(modelBuilder); // Ensure Identity configuration is applied
 
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             var datetimeConverter = new ValueConverter<DateTime, DateTime>(e => e.SafeToUniversalTime(), e => DateTime.SpecifyKind(e, DateTimeKind.Utc));
 
             var ruminationMb = modelBuilder.Entity<Rumination>();
@@ -43,10 +54,16 @@ namespace RuminsterBackend.Data
             ruminationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
             ruminationMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
 
-            ruminationMb.HasOne(s => s.CreateBy).WithMany()
-                .HasForeignKey(s => s.CreateById).OnDelete(DeleteBehavior.Restrict);
-            ruminationMb.HasOne(s => s.UpdateBy).WithMany()
-                .HasForeignKey(s => s.UpdateById).OnDelete(DeleteBehavior.Restrict);
+            ruminationMb
+                .HasOne(s => s.CreateBy)
+                .WithMany()
+                .HasForeignKey(s => s.CreateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            ruminationMb
+                .HasOne(s => s.UpdateBy)
+                .WithMany()
+                .HasForeignKey(s => s.UpdateById)
+                .OnDelete(DeleteBehavior.Restrict);
 
             var ruminationLogMb = modelBuilder.Entity<RuminationLog>();
             ruminationLogMb.Property(s => s.Id).IsRequired();
@@ -58,10 +75,16 @@ namespace RuminsterBackend.Data
             ruminationLogMb.Property(s => s.CreateById).IsRequired();
             ruminationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
-            ruminationLogMb.HasOne(s => s.CreateBy).WithMany()
-                .HasForeignKey(s => s.CreateById).OnDelete(DeleteBehavior.Restrict);
-            ruminationLogMb.HasOne(s => s.Rumination).WithMany(s => s.Logs)
-                .HasForeignKey(s => s.RuminationId).OnDelete(DeleteBehavior.Cascade);
+            ruminationLogMb
+                .HasOne(s => s.CreateBy)
+                .WithMany()
+                .HasForeignKey(s => s.CreateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            ruminationLogMb
+                .HasOne(s => s.Rumination)
+                .WithMany(s => s.Logs)
+                .HasForeignKey(s => s.RuminationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             var ruminationAudienceMb = modelBuilder.Entity<RuminationAudience>();
             ruminationAudienceMb.Property(s => s.Id).IsRequired();
@@ -71,8 +94,11 @@ namespace RuminsterBackend.Data
             ruminationAudienceMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
             ruminationAudienceMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
             
-            ruminationAudienceMb.HasOne(s => s.Rumination).WithMany(s => s.Audiences)
-                .HasForeignKey(s => s.RuminationId).OnDelete(DeleteBehavior.Cascade);
+            ruminationAudienceMb
+                .HasOne(s => s.Rumination)
+                .WithMany(s => s.Audiences)
+                .HasForeignKey(s => s.RuminationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             var refreshTokenMb = modelBuilder.Entity<RefreshToken>();
             refreshTokenMb.Property(s => s.Id).IsRequired();
@@ -82,8 +108,11 @@ namespace RuminsterBackend.Data
             refreshTokenMb.Property(s => s.IsRevoked).HasDefaultValue(false).IsRequired();
             refreshTokenMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
-            refreshTokenMb.HasOne(s => s.User).WithMany()
-                .HasForeignKey(s => s.UserId).OnDelete(DeleteBehavior.Restrict);
+            refreshTokenMb
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             var userRelationMb = modelBuilder.Entity<UserRelation>();
             userRelationMb.Property(s => s.Id).IsRequired();
@@ -98,10 +127,16 @@ namespace RuminsterBackend.Data
             userRelationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
             userRelationMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
 
-            userRelationMb.HasOne(s => s.CreateBy).WithMany()
-                .HasForeignKey(s => s.CreateById).OnDelete(DeleteBehavior.Restrict);
-            userRelationMb.HasOne(s => s.UpdateBy).WithMany()
-                .HasForeignKey(s => s.UpdateById).OnDelete(DeleteBehavior.Restrict);
+            userRelationMb
+                .HasOne(s => s.CreateBy)
+                .WithMany()
+                .HasForeignKey(s => s.CreateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationMb
+                .HasOne(s => s.UpdateBy)
+                .WithMany()
+                .HasForeignKey(s => s.UpdateById)
+                .OnDelete(DeleteBehavior.Restrict);
 
             var userRelationLogMb = modelBuilder.Entity<UserRelationLog>();
             userRelationLogMb.Property(s => s.Id).IsRequired();
@@ -115,10 +150,16 @@ namespace RuminsterBackend.Data
             userRelationLogMb.Property(s => s.CreateById).IsRequired();
             userRelationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
-            userRelationLogMb.HasOne(s => s.CreateBy).WithMany()
-                .HasForeignKey(s => s.CreateById).OnDelete(DeleteBehavior.Restrict);
-            userRelationLogMb.HasOne(s => s.UserRelation).WithMany(s => s.Logs)
-                .HasForeignKey(s => s.UserRelationId).OnDelete(DeleteBehavior.Cascade);
+            userRelationLogMb
+                .HasOne(s => s.CreateBy)
+                .WithMany()
+                .HasForeignKey(s => s.CreateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationLogMb
+                .HasOne(s => s.UserRelation)
+                .WithMany(s => s.Logs)
+                .HasForeignKey(s => s.UserRelationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
