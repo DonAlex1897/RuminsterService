@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("175dfbae-931f-4ee7-ad56-d5f76dc2c0cf")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1fbdf9a09cfaae89494f887620b4f5afdc85b7df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b00392cfaf813c7665f114e3c6264e66accf1d1")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuminsterBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
