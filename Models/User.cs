@@ -8,7 +8,28 @@ namespace RuminsterBackend.Models
 {
     public class User : IdentityUser
     {
-        public ICollection<UserRole> UserRoles { get; set; }
-        
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public ICollection<Rumination> RuminationsCreateBy { get; set; }
+
+        public ICollection<Rumination> RuminationsUpdateBy { get; set; }
+
+        public ICollection<RuminationLog> RuminationLogsCreateBy { get; set; }
+
+        public ICollection<UserRelation> UserRelationsInitiator { get; set; }
+
+        public ICollection<UserRelation> UserRelationsReceiver { get; set; }
+
+        public ICollection<UserRelation> UserRelationsCreateBy { get; set; }
+
+        public ICollection<UserRelation> UserRelationsUpdateBy { get; set; }
+
+        public ICollection<UserRelationLog> UserRelationLogsInitiator { get; set; }
+
+        public ICollection<UserRelationLog> UserRelationLogsReceiver { get; set; }
+
+        public ICollection<UserRelationLog> UserRelationLogsCreateBy { get; set; }
+
+        public ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

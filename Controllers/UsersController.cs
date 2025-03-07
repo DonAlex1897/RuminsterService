@@ -19,9 +19,14 @@ namespace RuminsterBackend.Controllers
         [HttpGet("current")]
         public async Task<ActionResult<UserResponse>> GetCurrentUserAsync()
         {
-            using var transaction = await _contextService.Context.Database.BeginTransactionAsync();
             var response = await _usersService.GetCurrentUserAsync();
-            await transaction.CommitAsync();
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<UserResponse>>> GetUsersAsync([FromQuery] GetUsersQueryParams queryParams)
+        {
+            var response = await _usersService.GetUsersAsync(queryParams);
             return Ok(response);
         }
 

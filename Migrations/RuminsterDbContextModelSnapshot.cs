@@ -94,28 +94,6 @@ namespace RuminsterBackend.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("varchar(34)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
@@ -513,11 +491,17 @@ namespace RuminsterBackend.Migrations
 
             modelBuilder.Entity("RuminsterBackend.Models.UserRole", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.HasDiscriminator().HasValue("UserRole");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -559,7 +543,7 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("RuminsterBackend.Models.RefreshToken", b =>
                 {
                     b.HasOne("RuminsterBackend.Models.User", "User")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -570,13 +554,13 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("RuminsterBackend.Models.Rumination", b =>
                 {
                     b.HasOne("RuminsterBackend.Models.User", "CreateBy")
-                        .WithMany()
+                        .WithMany("RuminationsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "UpdateBy")
-                        .WithMany()
+                        .WithMany("RuminationsUpdateBy")
                         .HasForeignKey("UpdateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -600,7 +584,7 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("RuminsterBackend.Models.RuminationLog", b =>
                 {
                     b.HasOne("RuminsterBackend.Models.User", "CreateBy")
-                        .WithMany()
+                        .WithMany("RuminationLogsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -619,25 +603,25 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("RuminsterBackend.Models.UserRelation", b =>
                 {
                     b.HasOne("RuminsterBackend.Models.User", "CreateBy")
-                        .WithMany()
+                        .WithMany("UserRelationsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Initiator")
-                        .WithMany()
+                        .WithMany("UserRelationsInitiator")
                         .HasForeignKey("InitiatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Receiver")
-                        .WithMany()
+                        .WithMany("UserRelationsReceiver")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "UpdateBy")
-                        .WithMany()
+                        .WithMany("UserRelationsUpdateBy")
                         .HasForeignKey("UpdateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -654,21 +638,21 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("RuminsterBackend.Models.UserRelationLog", b =>
                 {
                     b.HasOne("RuminsterBackend.Models.User", "CreateBy")
-                        .WithMany()
+                        .WithMany("UserRelationLogsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Initiator")
-                        .WithMany()
+                        .WithMany("UserRelationLogsInitiator")
                         .HasForeignKey("InitiatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Receiver")
-                        .WithMany()
+                        .WithMany("UserRelationLogsReceiver")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.UserRelation", "UserRelation")
@@ -719,6 +703,28 @@ namespace RuminsterBackend.Migrations
 
             modelBuilder.Entity("RuminsterBackend.Models.User", b =>
                 {
+                    b.Navigation("RefreshTokens");
+
+                    b.Navigation("RuminationLogsCreateBy");
+
+                    b.Navigation("RuminationsCreateBy");
+
+                    b.Navigation("RuminationsUpdateBy");
+
+                    b.Navigation("UserRelationLogsCreateBy");
+
+                    b.Navigation("UserRelationLogsInitiator");
+
+                    b.Navigation("UserRelationLogsReceiver");
+
+                    b.Navigation("UserRelationsCreateBy");
+
+                    b.Navigation("UserRelationsInitiator");
+
+                    b.Navigation("UserRelationsReceiver");
+
+                    b.Navigation("UserRelationsUpdateBy");
+
                     b.Navigation("UserRoles");
                 });
 

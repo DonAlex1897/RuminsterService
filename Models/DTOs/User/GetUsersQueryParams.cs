@@ -8,8 +8,8 @@ namespace RuminsterBackend.Models.DTOs.User
 {
     public class GetUsersQueryParams
     {
-        public List<string> Username { get; set; }
+        public List<string>? Username { get; set; }
 
-        public List<UserRelationType> Relation { get; set; }
+        public List<UserRelationType>? Relation { get; set; } = [];
     }
 }

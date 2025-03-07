@@ -8,6 +8,6 @@ namespace RuminsterBackend.Models
 {
     public class Role : IdentityRole
     {
-        public ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

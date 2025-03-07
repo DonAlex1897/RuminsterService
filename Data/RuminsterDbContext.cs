@@ -7,7 +7,10 @@ using RuminsterBackend.Models;
 
 namespace RuminsterBackend.Data
 {
-    public class RuminsterDbContext : IdentityDbContext<User, Role, string>
+    public class RuminsterDbContext : IdentityDbContext<
+        User, Role, string,
+        IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>,
+        IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public RuminsterDbContext(DbContextOptions<RuminsterDbContext> options)
             : base(options)
@@ -28,19 +31,24 @@ namespace RuminsterBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // Ensure Identity configuration is applied
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<User>(b =>
+            {
+                b.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.User)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+            });
 
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Role>(b =>
+            {
+                b.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.Role)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
 
             var datetimeConverter = new ValueConverter<DateTime, DateTime>(e => e.SafeToUniversalTime(), e => DateTime.SpecifyKind(e, DateTimeKind.Utc));
 
@@ -56,12 +64,12 @@ namespace RuminsterBackend.Data
 
             ruminationMb
                 .HasOne(s => s.CreateBy)
-                .WithMany()
+                .WithMany(s => s.RuminationsCreateBy)
                 .HasForeignKey(s => s.CreateById)
                 .OnDelete(DeleteBehavior.Restrict);
             ruminationMb
                 .HasOne(s => s.UpdateBy)
-                .WithMany()
+                .WithMany(s => s.RuminationsUpdateBy)
                 .HasForeignKey(s => s.UpdateById)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -77,7 +85,7 @@ namespace RuminsterBackend.Data
 
             ruminationLogMb
                 .HasOne(s => s.CreateBy)
-                .WithMany()
+                .WithMany(s => s.RuminationLogsCreateBy)
                 .HasForeignKey(s => s.CreateById)
                 .OnDelete(DeleteBehavior.Restrict);
             ruminationLogMb
@@ -110,7 +118,7 @@ namespace RuminsterBackend.Data
 
             refreshTokenMb
                 .HasOne(s => s.User)
-                .WithMany()
+                .WithMany(s => s.RefreshTokens)
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -128,13 +136,23 @@ namespace RuminsterBackend.Data
             userRelationMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
 
             userRelationMb
+                .HasOne(s => s.Initiator)
+                .WithMany(s => s.UserRelationsInitiator)
+                .HasForeignKey(s => s.InitiatorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationMb
+                .HasOne(s => s.Receiver)
+                .WithMany(s => s.UserRelationsReceiver)
+                .HasForeignKey(s => s.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationMb
                 .HasOne(s => s.CreateBy)
-                .WithMany()
+                .WithMany(s => s.UserRelationsCreateBy)
                 .HasForeignKey(s => s.CreateById)
                 .OnDelete(DeleteBehavior.Restrict);
             userRelationMb
                 .HasOne(s => s.UpdateBy)
-                .WithMany()
+                .WithMany(s => s.UserRelationsUpdateBy)
                 .HasForeignKey(s => s.UpdateById)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -151,8 +169,18 @@ namespace RuminsterBackend.Data
             userRelationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
             userRelationLogMb
+                .HasOne(s => s.Initiator)
+                .WithMany(s => s.UserRelationLogsInitiator)
+                .HasForeignKey(s => s.InitiatorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationLogMb
+                .HasOne(s => s.Receiver)
+                .WithMany(s => s.UserRelationLogsReceiver)
+                .HasForeignKey(s => s.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            userRelationLogMb
                 .HasOne(s => s.CreateBy)
-                .WithMany()
+                .WithMany(s => s.UserRelationLogsCreateBy)
                 .HasForeignKey(s => s.CreateById)
                 .OnDelete(DeleteBehavior.Restrict);
             userRelationLogMb

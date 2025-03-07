@@ -62,13 +62,7 @@ namespace RuminsterBackend.Services
 
             var users = await usersQuery.ToListAsync();
 
-            var userResponses = users.Select(u => new UserResponse
-            {
-                Id = u.Id,
-                Username = u.UserName ?? string.Empty,
-                Email = u.Email ?? string.Empty,
-                Roles = u.UserRoles.Select(r => r.RoleId).ToList(),
-            }).ToList();
+            var userResponses = users.Select(UserMapper.MapUserResponse).ToList();
 
             return userResponses;
         }
