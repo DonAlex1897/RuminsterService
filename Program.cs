@@ -18,8 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? string.Empty);
 
-Console.WriteLine($"SecretKey: {jwtSettings["SecretKey"]}");
-
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<RuminsterDbContext>()
     .AddDefaultTokenProviders();
