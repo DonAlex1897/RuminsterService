@@ -17,12 +17,21 @@ namespace RuminsterBackend.Controllers
         private readonly IRequestContextService _requestContextService = requestContextService;
         private readonly IRuminationsService _ruminationsService = ruminationsService;
 
-        [HttpGet]
+        [HttpGet("public")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<RuminationResponse>>> GetRuminationsAsync([FromQuery]GetRuminationsQueryParams queryParams)
+        public async Task<ActionResult<List<RuminationResponse>>> GetPublicRuminationsAsync([FromQuery]GetRuminationsQueryParams queryParams)
         {
-            var response = await _ruminationsService.GetRuminationsAsync(queryParams);
+            var response = await _ruminationsService.GetPublicRuminationsAsync(queryParams);
+            return Ok(response);
+        }
+        
+        [HttpGet("myRuminations")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<RuminationResponse>>> GetMyRuminationsAsync([FromQuery]GetMyRuminationsQueryParams queryParams)
+        {
+            var response = await _ruminationsService.GetMyRuminationsAsync(queryParams);
             return Ok(response);
         }
         

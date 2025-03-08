@@ -12,8 +12,6 @@ namespace RuminsterBackend.Models.DTOs.Rumination
 
         public List<string>? Content { get; set; }
 
-        public bool IsPublic { get; set; }
-
         public List<string>? UserId { get; set; }
 
         public DateTime? FromTMS { get; set; }
