@@ -31,7 +31,7 @@ namespace RuminsterBackend.Services
                 RuminationId = rumination.Id,
                 IsDeleted = rumination.IsDeleted,
                 Content = rumination.Content,
-                IsPublic = rumination.IsPublished,
+                IsPublished = rumination.IsPublished,
                 CallerMethod = callerMethod,
                 CreateById = rumination.UpdateById,
                 CreateTMS = rumination.UpdateTMS,
@@ -252,7 +252,7 @@ namespace RuminsterBackend.Services
             var newRumination = new Rumination
             {
                 Content = dto.Content,
-                IsPublished = dto.IsPublic,
+                IsPublished = dto.Publish,
                 Audiences = audiences,
                 Logs = [],
                 CreateById = _user.Id,
