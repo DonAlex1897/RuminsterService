@@ -18,6 +18,8 @@ namespace RuminsterBackend.Models.DTOs.Rumination
 
         public DateTime? ToTMS { get; set; }
 
+        public bool IsPublic { get; set; }
+
         public bool? IncludeDeleted { get; set; }
 
         public string? Sort { get; set; }

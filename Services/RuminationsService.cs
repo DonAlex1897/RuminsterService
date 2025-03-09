@@ -38,7 +38,7 @@ namespace RuminsterBackend.Services
             };
         }
 
-        public async Task<List<RuminationResponse>> GetPublicRuminationsAsync(GetRuminationsQueryParams queryParams)
+        public async Task<List<RuminationResponse>> GetRuminationsAsync(GetRuminationsQueryParams queryParams)
         {
             var ruminationsQuery = _context.Ruminations
                 .Include(q => q.Logs)
@@ -86,8 +86,28 @@ namespace RuminsterBackend.Services
                     .Where(q => !q.IsDeleted);
             }
 
-            ruminationsQuery = ruminationsQuery
-                .Where(q => q.Audiences == null || !q.Audiences.Any(q => !q.IsDeleted));
+            if (queryParams.IsPublic)
+            {
+                ruminationsQuery = ruminationsQuery
+                    .Where(q => q.Audiences == null || !q.Audiences.Any(q => !q.IsDeleted));
+            }
+            else
+            {
+                var relatedUserIdsQuery = _context.UserRelations
+                    .Where(q => (q.ReceiverId == _user.Id || q.InitiatorId == _user.Id) &&
+                                q.IsAccepted && !q.IsDeleted)
+                    .Select(q => new
+                    {
+                        UserId = q.InitiatorId != _user.Id ? q.InitiatorId : q.ReceiverId,
+                        RelationType = q.Type
+                    });
+
+                ruminationsQuery = ruminationsQuery.Where(r =>
+                    r.Audiences.Any(a =>
+                        !a.IsDeleted &&
+                        relatedUserIdsQuery.Any(ru => ru.UserId == r.CreateById && ru.RelationType == a.RelationType)
+                    ));
+            }
 
             // Sort
             if (!string.IsNullOrEmpty(queryParams.Sort))

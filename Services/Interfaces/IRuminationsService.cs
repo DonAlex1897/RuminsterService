@@ -9,7 +9,7 @@ namespace RuminsterBackend.Services.Interfaces
 {
     public interface IRuminationsService
     {
-        Task<List<RuminationResponse>> GetPublicRuminationsAsync(GetRuminationsQueryParams queryParams);
+        Task<List<RuminationResponse>> GetRuminationsAsync(GetRuminationsQueryParams queryParams);
 
         Task<List<RuminationResponse>> GetMyRuminationsAsync(GetMyRuminationsQueryParams queryParams);
 
