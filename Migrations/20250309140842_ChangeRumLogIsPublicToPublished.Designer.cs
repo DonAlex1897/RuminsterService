@@ -2,8 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RuminsterBackend.Data;
 
 #nullable disable
@@ -11,44 +12,40 @@ using RuminsterBackend.Data;
 namespace RuminsterBackend.Migrations
 {
     [DbContext(typeof(RuminsterDbContext))]
-    partial class RuminsterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250309140842_ChangeRumLogIsPublicToPublished")]
+    partial class ChangeRumLogIsPublicToPublished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_role_claims");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
@@ -57,29 +54,23 @@ namespace RuminsterBackend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_user_claims");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
@@ -87,27 +78,21 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("text")
-                        .HasColumnName("provider_key");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_asp_net_user_logins");
+                    b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
@@ -115,23 +100,18 @@ namespace RuminsterBackend.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("text")
-                        .HasColumnName("value");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_asp_net_user_tokens");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
@@ -140,69 +120,56 @@ namespace RuminsterBackend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsRevoked")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_revoked");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("token");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_refresh_tokens");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_refresh_tokens_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("refresh_tokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.Role", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_name");
+                        .HasColumnType("varchar(256)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_roles");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -215,229 +182,183 @@ namespace RuminsterBackend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("create_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsPublished")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_public");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("UpdateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("update_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("UpdateTMS")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("update_tms");
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_ruminations");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CreateById")
-                        .HasDatabaseName("ix_ruminations_create_by_id");
+                    b.HasIndex("CreateById");
 
-                    b.HasIndex("UpdateById")
-                        .HasDatabaseName("ix_ruminations_update_by_id");
+                    b.HasIndex("UpdateById");
 
-                    b.ToTable("ruminations", (string)null);
+                    b.ToTable("Ruminations");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.RuminationAudience", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("RelationType")
-                        .HasColumnType("integer")
-                        .HasColumnName("relation_type");
+                        .HasColumnType("int");
 
                     b.Property<int>("RuminationId")
-                        .HasColumnType("integer")
-                        .HasColumnName("rumination_id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateTMS")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("update_tms");
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_rumination_audiences");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RuminationId")
-                        .HasDatabaseName("ix_rumination_audiences_rumination_id");
+                    b.HasIndex("RuminationId");
 
-                    b.ToTable("rumination_audiences", (string)null);
+                    b.ToTable("RuminationAudiences");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.RuminationLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CallerMethod")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("caller_method");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("create_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsPublished")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_public");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("RuminationId")
-                        .HasColumnType("integer")
-                        .HasColumnName("rumination_id");
+                        .HasColumnType("int");
 
-                    b.HasKey("Id")
-                        .HasName("pk_rumination_logs");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CreateById")
-                        .HasDatabaseName("ix_rumination_logs_create_by_id");
+                    b.HasIndex("CreateById");
 
-                    b.HasIndex("RuminationId")
-                        .HasDatabaseName("ix_rumination_logs_rumination_id");
+                    b.HasIndex("RuminationId");
 
-                    b.ToTable("rumination_logs", (string)null);
+                    b.ToTable("RuminationLogs");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("email");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockout_end");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_email");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text")
-                        .HasColumnName("password_hash");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("phone_number");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("phone_number_confirmed");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text")
-                        .HasColumnName("security_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("user_name");
+                        .HasColumnType("varchar(256)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -453,170 +374,135 @@ namespace RuminsterBackend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("create_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<string>("InitiatorId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("initiator_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsAccepted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_accepted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsRejected")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_rejected");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("receiver_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type");
+                        .HasColumnType("int");
 
                     b.Property<string>("UpdateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("update_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("UpdateTMS")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("update_tms");
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_user_relations");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CreateById")
-                        .HasDatabaseName("ix_user_relations_create_by_id");
+                    b.HasIndex("CreateById");
 
-                    b.HasIndex("InitiatorId")
-                        .HasDatabaseName("ix_user_relations_initiator_id");
+                    b.HasIndex("InitiatorId");
 
-                    b.HasIndex("ReceiverId")
-                        .HasDatabaseName("ix_user_relations_receiver_id");
+                    b.HasIndex("ReceiverId");
 
-                    b.HasIndex("UpdateById")
-                        .HasDatabaseName("ix_user_relations_update_by_id");
+                    b.HasIndex("UpdateById");
 
-                    b.ToTable("user_relations", (string)null);
+                    b.ToTable("UserRelations");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.UserRelationLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreateById")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("create_by_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreateTMS")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_tms")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
                     b.Property<string>("InitiatorId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("initiator_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsAccepted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_accepted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsRejected")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_rejected");
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("receiver_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserRelationId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_relation_id");
+                        .HasColumnType("int");
 
-                    b.HasKey("Id")
-                        .HasName("pk_user_relation_logs");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CreateById")
-                        .HasDatabaseName("ix_user_relation_logs_create_by_id");
+                    b.HasIndex("CreateById");
 
-                    b.HasIndex("InitiatorId")
-                        .HasDatabaseName("ix_user_relation_logs_initiator_id");
+                    b.HasIndex("InitiatorId");
 
-                    b.HasIndex("ReceiverId")
-                        .HasDatabaseName("ix_user_relation_logs_receiver_id");
+                    b.HasIndex("ReceiverId");
 
-                    b.HasIndex("UserRelationId")
-                        .HasDatabaseName("ix_user_relation_logs_user_relation_id");
+                    b.HasIndex("UserRelationId");
 
-                    b.ToTable("user_relation_logs", (string)null);
+                    b.ToTable("UserRelationLogs");
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.UserRole", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
+                    b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
@@ -627,8 +513,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -637,8 +522,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -647,8 +531,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -657,8 +540,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RuminsterBackend.Models.RefreshToken", b =>
@@ -667,8 +549,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_refresh_tokens_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -679,15 +560,13 @@ namespace RuminsterBackend.Migrations
                         .WithMany("RuminationsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_ruminations_asp_net_users_create_by_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "UpdateBy")
                         .WithMany("RuminationsUpdateBy")
                         .HasForeignKey("UpdateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_ruminations_asp_net_users_update_by_id");
+                        .IsRequired();
 
                     b.Navigation("CreateBy");
 
@@ -700,8 +579,7 @@ namespace RuminsterBackend.Migrations
                         .WithMany("Audiences")
                         .HasForeignKey("RuminationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_rumination_audiences_ruminations_rumination_id");
+                        .IsRequired();
 
                     b.Navigation("Rumination");
                 });
@@ -712,15 +590,13 @@ namespace RuminsterBackend.Migrations
                         .WithMany("RuminationLogsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_rumination_logs_users_create_by_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.Rumination", "Rumination")
                         .WithMany("Logs")
                         .HasForeignKey("RuminationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_rumination_logs_ruminations_rumination_id");
+                        .IsRequired();
 
                     b.Navigation("CreateBy");
 
@@ -733,29 +609,25 @@ namespace RuminsterBackend.Migrations
                         .WithMany("UserRelationsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relations_asp_net_users_create_by_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Initiator")
                         .WithMany("UserRelationsInitiator")
                         .HasForeignKey("InitiatorId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relations_asp_net_users_initiator_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Receiver")
                         .WithMany("UserRelationsReceiver")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relations_asp_net_users_receiver_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "UpdateBy")
                         .WithMany("UserRelationsUpdateBy")
                         .HasForeignKey("UpdateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relations_asp_net_users_update_by_id");
+                        .IsRequired();
 
                     b.Navigation("CreateBy");
 
@@ -772,29 +644,25 @@ namespace RuminsterBackend.Migrations
                         .WithMany("UserRelationLogsCreateBy")
                         .HasForeignKey("CreateById")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relation_logs_asp_net_users_create_by_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Initiator")
                         .WithMany("UserRelationLogsInitiator")
                         .HasForeignKey("InitiatorId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relation_logs_asp_net_users_initiator_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "Receiver")
                         .WithMany("UserRelationLogsReceiver")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relation_logs_asp_net_users_receiver_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.UserRelation", "UserRelation")
                         .WithMany("Logs")
                         .HasForeignKey("UserRelationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_relation_logs_user_relations_user_relation_id");
+                        .IsRequired();
 
                     b.Navigation("CreateBy");
 
@@ -811,15 +679,13 @@ namespace RuminsterBackend.Migrations
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
+                        .IsRequired();
 
                     b.HasOne("RuminsterBackend.Models.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Role");
 

@@ -31,7 +31,7 @@ namespace RuminsterBackend.Services
                 RuminationId = rumination.Id,
                 IsDeleted = rumination.IsDeleted,
                 Content = rumination.Content,
-                IsPublic = rumination.IsPublic,
+                IsPublished = rumination.IsPublished,
                 CallerMethod = callerMethod,
                 CreateById = rumination.UpdateById,
                 CreateTMS = rumination.UpdateTMS,
@@ -45,10 +45,9 @@ namespace RuminsterBackend.Services
                 .Include(q => q.Audiences)
                 .Include(q => q.CreateBy)
                 .Include(q => q.UpdateBy)
+                .Where(q => q.IsPublished)
                 .AsNoTracking()
                 .AsQueryable();
-            
-            ruminationsQuery.Where(q => q.IsPublic == queryParams.IsPublic);
 
             if (queryParams.Id?.Count > 0)
             {
@@ -85,6 +84,29 @@ namespace RuminsterBackend.Services
             {
                 ruminationsQuery = ruminationsQuery
                     .Where(q => !q.IsDeleted);
+            }
+
+            if (queryParams.IsPublic)
+            {
+                ruminationsQuery = ruminationsQuery
+                    .Where(q => q.Audiences == null || !q.Audiences.Any(q => !q.IsDeleted));
+            }
+            else
+            {
+                var relatedUserIdsQuery = _context.UserRelations
+                    .Where(q => (q.ReceiverId == _user.Id || q.InitiatorId == _user.Id) &&
+                                q.IsAccepted && !q.IsDeleted)
+                    .Select(q => new
+                    {
+                        UserId = q.InitiatorId != _user.Id ? q.InitiatorId : q.ReceiverId,
+                        RelationType = q.Type
+                    });
+
+                ruminationsQuery = ruminationsQuery.Where(r =>
+                    r.Audiences.Any(a =>
+                        !a.IsDeleted &&
+                        relatedUserIdsQuery.Any(ru => ru.UserId == r.CreateById && ru.RelationType == a.RelationType)
+                    ));
             }
 
             // Sort
@@ -134,10 +156,9 @@ namespace RuminsterBackend.Services
                 .Include(q => q.CreateBy)
                 .Include(q => q.UpdateBy)
                 .Where(q => q.CreateById == _user.Id)
+                .Where(q => q.IsPublished == queryParams.IsPublic)
                 .AsNoTracking()
                 .AsQueryable();
-
-            ruminationsQuery.Where(q => q.IsPublic == queryParams.IsPublic);
 
             if (queryParams.Content?.Count > 0)
             {
@@ -203,11 +224,6 @@ namespace RuminsterBackend.Services
             return ruminationsResponse;
         }
 
-        // public async Task<List<RuminationResponse>> GetOthersRuminationsAsync(GetOthersRuminationsQueryParams queryParams)
-        // {
-
-        // }
-
         public async Task<RuminationResponse> GetRuminationAsync(int ruminationId)
         {
             var rumination = await _context.Ruminations
@@ -236,7 +252,7 @@ namespace RuminsterBackend.Services
             var newRumination = new Rumination
             {
                 Content = dto.Content,
-                IsPublic = dto.IsPublic,
+                IsPublished = dto.Publish,
                 Audiences = audiences,
                 Logs = [],
                 CreateById = _user.Id,
@@ -298,7 +314,7 @@ namespace RuminsterBackend.Services
                 throw new ForbiddenException("You do not have permission to edit this rumination.");
             }
             
-            rumination.IsPublic = !rumination.IsPublic;
+            rumination.IsPublished = !rumination.IsPublished;
             rumination.UpdateById = _user.Id;
             rumination.UpdateTMS = _currentTime;
             rumination.Logs.Add(MapToLog(rumination, "PutRuminationVisibilityAsync"));

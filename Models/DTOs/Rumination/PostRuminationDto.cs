@@ -10,7 +10,7 @@ namespace RuminsterBackend.Models.DTOs.Rumination
     {
         public string Content { get; set; }
 
-        public bool IsPublic { get; set; }
+        public bool Publish { get; set; }
 
         public List<UserRelationType>? Audiences { get; set; }
     }

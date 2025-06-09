@@ -11,7 +11,7 @@ namespace RuminsterBackend.Models.DTOs.Rumination
             {
                 Id = rumination.Id,
                 Content = rumination.Content,
-                IsPublic = rumination.IsPublic,
+                IsPublished = rumination.IsPublished,
                 Audiences = [..rumination.Audiences?
                     .Where(q => !q.IsDeleted)?
                     .Select(MapRuminationAudienceResponse) ?? []],

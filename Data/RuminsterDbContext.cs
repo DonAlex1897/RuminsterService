@@ -59,7 +59,7 @@ namespace RuminsterBackend.Data
             ruminationMb.Property(s => s.Id).IsRequired();
             ruminationMb.Property(s => s.IsDeleted).HasDefaultValue(false).IsRequired();
             ruminationMb.Property(s => s.Content);
-            ruminationMb.Property(s => s.IsPublic).HasDefaultValue(false).IsRequired();
+            ruminationMb.Property(s => s.IsPublished).HasDefaultValue(false).IsRequired();
             ruminationMb.Property(s => s.CreateById).IsRequired();
             ruminationMb.Property(s => s.UpdateById).IsRequired();
             ruminationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -81,7 +81,7 @@ namespace RuminsterBackend.Data
             ruminationLogMb.Property(s => s.RuminationId).IsRequired();
             ruminationLogMb.Property(s => s.IsDeleted).HasDefaultValue(false).IsRequired();
             ruminationLogMb.Property(s => s.Content);
-            ruminationLogMb.Property(s => s.IsPublic).HasDefaultValue(false).IsRequired();
+            ruminationLogMb.Property(s => s.IsPublished).HasDefaultValue(false).IsRequired();
             ruminationLogMb.Property(s => s.CallerMethod);
             ruminationLogMb.Property(s => s.CreateById).IsRequired();
             ruminationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
