@@ -50,7 +50,10 @@ namespace RuminsterBackend.Data
                     .IsRequired();
             });
 
-            var datetimeConverter = new ValueConverter<DateTime, DateTime>(e => e.SafeToUniversalTime(), e => DateTime.SpecifyKind(e, DateTimeKind.Utc));
+            var datetimeConverter = new ValueConverter<DateTime, DateTime>(
+                e => e.SafeToUniversalTime(),
+                e => DateTime.SpecifyKind(e, DateTimeKind.Utc)
+            );
 
             var ruminationMb = modelBuilder.Entity<Rumination>();
             ruminationMb.Property(s => s.Id).IsRequired();
@@ -59,7 +62,7 @@ namespace RuminsterBackend.Data
             ruminationMb.Property(s => s.IsPublic).HasDefaultValue(false).IsRequired();
             ruminationMb.Property(s => s.CreateById).IsRequired();
             ruminationMb.Property(s => s.UpdateById).IsRequired();
-            ruminationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            ruminationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
             ruminationMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
 
             ruminationMb
@@ -81,7 +84,7 @@ namespace RuminsterBackend.Data
             ruminationLogMb.Property(s => s.IsPublic).HasDefaultValue(false).IsRequired();
             ruminationLogMb.Property(s => s.CallerMethod);
             ruminationLogMb.Property(s => s.CreateById).IsRequired();
-            ruminationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            ruminationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             ruminationLogMb
                 .HasOne(s => s.CreateBy)
@@ -99,7 +102,7 @@ namespace RuminsterBackend.Data
             ruminationAudienceMb.Property(s => s.IsDeleted).HasDefaultValue(false).IsRequired();
             ruminationAudienceMb.Property(s => s.RuminationId).IsRequired();
             ruminationAudienceMb.Property(s => s.RelationType);
-            ruminationAudienceMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            ruminationAudienceMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
             ruminationAudienceMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
             
             ruminationAudienceMb
@@ -114,7 +117,7 @@ namespace RuminsterBackend.Data
             refreshTokenMb.Property(s => s.Token).IsRequired();
             refreshTokenMb.Property(s => s.ExpiresAt).HasConversion(datetimeConverter);
             refreshTokenMb.Property(s => s.IsRevoked).HasDefaultValue(false).IsRequired();
-            refreshTokenMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            refreshTokenMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             refreshTokenMb
                 .HasOne(s => s.User)
@@ -132,7 +135,7 @@ namespace RuminsterBackend.Data
             userRelationMb.Property(s => s.Type).IsRequired();
             userRelationMb.Property(s => s.CreateById).IsRequired();
             userRelationMb.Property(s => s.UpdateById).IsRequired();
-            userRelationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            userRelationMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
             userRelationMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
 
             userRelationMb
@@ -166,7 +169,7 @@ namespace RuminsterBackend.Data
             userRelationLogMb.Property(s => s.IsRejected).HasDefaultValue(false).IsRequired();
             userRelationLogMb.Property(s => s.Type).IsRequired();
             userRelationLogMb.Property(s => s.CreateById).IsRequired();
-            userRelationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            userRelationLogMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             userRelationLogMb
                 .HasOne(s => s.Initiator)
