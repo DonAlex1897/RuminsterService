@@ -188,7 +188,7 @@ namespace RuminsterBackend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     content = table.Column<string>(type: "text", nullable: false),
-                    is_public = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    is_published = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     create_by_id = table.Column<string>(type: "text", nullable: false),
                     update_by_id = table.Column<string>(type: "text", nullable: false),
                     create_tms = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -289,7 +289,7 @@ namespace RuminsterBackend.Migrations
                     rumination_id = table.Column<int>(type: "integer", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     content = table.Column<string>(type: "text", nullable: false),
-                    is_public = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    is_published = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     caller_method = table.Column<string>(type: "text", nullable: false),
                     create_by_id = table.Column<string>(type: "text", nullable: false),
                     create_tms = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")

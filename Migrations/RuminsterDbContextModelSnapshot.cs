@@ -246,7 +246,7 @@ namespace RuminsterBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
-                        .HasColumnName("is_public");
+                        .HasColumnName("is_published");
 
                     b.Property<string>("UpdateById")
                         .IsRequired()
@@ -351,7 +351,7 @@ namespace RuminsterBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
-                        .HasColumnName("is_public");
+                        .HasColumnName("is_published");
 
                     b.Property<int>("RuminationId")
                         .HasColumnType("integer")
