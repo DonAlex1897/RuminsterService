@@ -16,13 +16,6 @@ namespace RuminsterBackend.Controllers
         private readonly IRequestContextService _contextService = contextService;
         private readonly IUsersService _usersService = usersService;
 
-        [HttpGet("current")]
-        public async Task<ActionResult<UserResponse>> GetCurrentUserAsync()
-        {
-            var response = await _usersService.GetCurrentUserAsync();
-            return Ok(response);
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<UserResponse>>> GetUsersAsync([FromQuery] GetUsersQueryParams queryParams)
         {

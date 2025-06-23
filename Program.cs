@@ -18,6 +18,20 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? string.Empty);
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(allowedOrigins ?? Array.Empty<string>())
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<RuminsterDbContext>()
     .AddDefaultTokenProviders();
@@ -103,6 +117,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
+
+// Add CORS middleware
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

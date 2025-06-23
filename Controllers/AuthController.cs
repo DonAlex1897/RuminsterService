@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RuminsterBackend.Models.DTOs.Auth;
+using RuminsterBackend.Models.DTOs.User;
 using RuminsterBackend.Services.Interfaces;
 
 namespace RuminsterBackend.Controllers
@@ -9,10 +10,19 @@ namespace RuminsterBackend.Controllers
     [Route("api/[controller]")]
     public class AuthController(
         IRequestContextService contextService,
-        IAuthService authService) : ControllerBase
+        IAuthService authService,
+        IUsersService usersService) : ControllerBase
     {
         private readonly IRequestContextService _contextService = contextService;
         private readonly IAuthService _authService = authService;
+        private readonly IUsersService _usersService = usersService;
+
+        [HttpGet("me")]
+        public async Task<ActionResult<UserResponse>> GetCurrentUserAsync()
+        {
+            var response = await _usersService.GetCurrentUserAsync();
+            return Ok(response);
+        }
 
         [HttpPost("signup")]
         public async Task<ActionResult<LoginResponse>> SignUp([FromBody] PostSignUpDto dto)
