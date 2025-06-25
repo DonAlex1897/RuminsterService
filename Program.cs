@@ -112,6 +112,9 @@ var app = builder.Build();
 // Initialize roles (if they don't exist)
 using (var scope = app.Services.CreateScope())
 {
+    var context = scope.ServiceProvider.GetRequiredService<RuminsterDbContext>();
+    context.Database.Migrate(); // Applies any pending migrations
+    
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
     await RoleInitializer.InitializeRoles(roleManager);
 }
