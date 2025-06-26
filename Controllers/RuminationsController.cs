@@ -26,7 +26,7 @@ namespace RuminsterBackend.Controllers
             return Ok(response);
         }
         
-        [HttpGet("myRuminations")]
+        [HttpGet("my")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<RuminationResponse>>> GetMyRuminationsAsync([FromQuery]GetMyRuminationsQueryParams queryParams)
