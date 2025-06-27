@@ -18,7 +18,7 @@ namespace RuminsterBackend.Services
         IRequestContextService requestContextService
     ) : IRuminationsService
     {
-        private readonly UserResponse _user = requestContextService.User;
+        private readonly IRequestContextService _requestContextService = requestContextService;
 
         private readonly DateTime _currentTime = requestContextService.Time;
 
@@ -94,11 +94,11 @@ namespace RuminsterBackend.Services
             else
             {
                 var relatedUserIdsQuery = _context.UserRelations
-                    .Where(q => (q.ReceiverId == _user.Id || q.InitiatorId == _user.Id) &&
+                    .Where(q => (q.ReceiverId == _requestContextService.User.Id || q.InitiatorId == _requestContextService.User.Id) &&
                                 q.IsAccepted && !q.IsDeleted)
                     .Select(q => new
                     {
-                        UserId = q.InitiatorId != _user.Id ? q.InitiatorId : q.ReceiverId,
+                        UserId = q.InitiatorId != _requestContextService.User.Id ? q.InitiatorId : q.ReceiverId,
                         RelationType = q.Type
                     });
 
@@ -155,7 +155,7 @@ namespace RuminsterBackend.Services
                 .Include(q => q.Audiences)
                 .Include(q => q.CreateBy)
                 .Include(q => q.UpdateBy)
-                .Where(q => q.CreateById == _user.Id)
+                .Where(q => q.CreateById == _requestContextService.User.Id)
                 .Where(q => q.IsPublished == queryParams.IsPublic)
                 .AsNoTracking()
                 .AsQueryable();
@@ -255,9 +255,9 @@ namespace RuminsterBackend.Services
                 IsPublished = dto.Publish,
                 Audiences = audiences,
                 Logs = [],
-                CreateById = _user.Id,
+                CreateById = _requestContextService.User.Id,
                 CreateTMS = _currentTime,
-                UpdateById = _user.Id,
+                UpdateById = _requestContextService.User.Id,
                 UpdateTMS = _currentTime,
             };
 
@@ -281,13 +281,13 @@ namespace RuminsterBackend.Services
                 .FirstOrDefaultAsync() ?? 
                 throw new NotFoundException($"{ruminationId} is not a valid Rumination Id");
             
-            if (rumination.CreateById != _user.Id)
+            if (rumination.CreateById != _requestContextService.User.Id)
             {
                 throw new ForbiddenException("You do not have permission to edit this rumination.");
             }
             
             rumination.Content = dto.Content;
-            rumination.UpdateById = _user.Id;
+            rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
             rumination.Logs.Add(MapToLog(rumination, "PutRuminationContentAsync"));
             _context.Ruminations.Update(rumination);
@@ -309,13 +309,13 @@ namespace RuminsterBackend.Services
                 .FirstOrDefaultAsync() ?? 
                 throw new NotFoundException($"{ruminationId} is not a valid Rumination Id");
             
-            if (rumination.CreateById != _user.Id)
+            if (rumination.CreateById != _requestContextService.User.Id)
             {
                 throw new ForbiddenException("You do not have permission to edit this rumination.");
             }
             
             rumination.IsPublished = !rumination.IsPublished;
-            rumination.UpdateById = _user.Id;
+            rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
             rumination.Logs.Add(MapToLog(rumination, "PutRuminationVisibilityAsync"));
             _context.Ruminations.Update(rumination);
@@ -336,13 +336,13 @@ namespace RuminsterBackend.Services
                 .FirstOrDefaultAsync() ?? 
                 throw new NotFoundException($"{ruminationId} is not a valid Rumination Id");
             
-            if (rumination.CreateById != _user.Id)
+            if (rumination.CreateById != _requestContextService.User.Id)
             {
                 throw new ForbiddenException("You do not have permission to delete this rumination.");
             }
             
             rumination.IsDeleted = true;
-            rumination.UpdateById = _user.Id;
+            rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
             rumination.Logs.Add(MapToLog(rumination, "DeleteRuminationAsync"));
             _context.Ruminations.Update(rumination);
@@ -361,7 +361,7 @@ namespace RuminsterBackend.Services
                 .FirstOrDefaultAsync() ?? 
                 throw new NotFoundException($"{ruminationId} is not a valid Rumination Id");
             
-            if (rumination.CreateById != _user.Id)
+            if (rumination.CreateById != _requestContextService.User.Id)
             {
                 throw new ForbiddenException("You do not have permission to edit this rumination.");
             }
@@ -389,7 +389,7 @@ namespace RuminsterBackend.Services
 
             await _context.RuminationAudiences.AddRangeAsync(newAudiences);
 
-            rumination.UpdateById = _user.Id;
+            rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
             rumination.Logs.Add(MapToLog(rumination, "PutRuminationAudiencesAsync"));
             _context.Ruminations.Update(rumination);
