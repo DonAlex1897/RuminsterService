@@ -24,5 +24,7 @@ namespace RuminsterBackend.Services.Interfaces
         Task DeleteRuminationAsync(int ruminationId);
         
         Task<RuminationResponse> PutRuminationAudiencesAsync(int ruminationId, PutRuminationAudiencesDto dto);
+
+        Task<RuminationResponse> PutRuminationAsync(int ruminationId, PutRuminationDto dto);
     }
 }

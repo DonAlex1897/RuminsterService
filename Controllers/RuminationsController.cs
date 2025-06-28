@@ -122,5 +122,18 @@ namespace RuminsterBackend.Controllers
             await transaction.CommitAsync();
             return this.Ok(response);
         }
+
+        [HttpPut("{ruminationId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<RuminationResponse>> PutRuminationAsync(int ruminationId, PutRuminationDto dto)
+        {
+            using var transaction = await _requestContextService.Context.Database.BeginTransactionAsync();
+            var response = await _ruminationsService.PutRuminationAsync(ruminationId, dto);
+            await transaction.CommitAsync();
+            return this.Ok(response);
+        }
     }
 }

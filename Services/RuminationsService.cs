@@ -398,5 +398,60 @@ namespace RuminsterBackend.Services
             var ruminationResponse = RuminationMapper.MapRuminationResponse(rumination); 
             return ruminationResponse;
         }
+
+        public async Task<RuminationResponse> PutRuminationAsync(int ruminationId, PutRuminationDto dto)
+        {
+            var rumination = await _context.Ruminations
+                .Include(q => q.Logs)
+                .Include(q => q.Audiences)
+                .Include(q => q.CreateBy)
+                .Include(q => q.UpdateBy)
+                .Where(q => !q.IsDeleted)
+                .Where(q => q.Id == ruminationId)
+                .FirstOrDefaultAsync() ?? 
+                throw new NotFoundException($"{ruminationId} is not a valid Rumination Id");
+            
+            if (rumination.CreateById != _requestContextService.User.Id)
+            {
+                throw new ForbiddenException("You do not have permission to edit this rumination.");
+            }
+            
+            // Update content
+            rumination.Content = dto.Content;
+            rumination.IsPublished = dto.Publish;
+            
+            // Update audiences
+            List<RuminationAudience> currentAudiences = [..rumination.Audiences?.Where(q => !q.IsDeleted) ?? []];
+
+            currentAudiences.ForEach(q => {
+                if (!(dto.Audiences?.Contains(q.RelationType) ?? false))
+                {
+                    q.IsDeleted = true;
+                }
+            });
+
+            _context.RuminationAudiences.UpdateRange(currentAudiences);
+            
+            List<RuminationAudience> newAudiences = [..dto.Audiences?
+                .Where(q => !currentAudiences.Select(a => a.RelationType).ToList().Contains(q))?
+                .Select(q => new RuminationAudience
+                {
+                    RuminationId = rumination.Id,
+                    RelationType = q,
+                    CreateTMS = _currentTime,
+                    UpdateTMS = _currentTime,
+                }) ?? []];
+
+            await _context.RuminationAudiences.AddRangeAsync(newAudiences);
+
+            rumination.UpdateById = _requestContextService.User.Id;
+            rumination.UpdateTMS = _currentTime;
+            rumination.Logs.Add(MapToLog(rumination, "PutRuminationAsync"));
+            _context.Ruminations.Update(rumination);
+            await _context.SaveChangesAsync();
+            
+            var ruminationResponse = RuminationMapper.MapRuminationResponse(rumination); 
+            return ruminationResponse;
+        }
     }
 }
