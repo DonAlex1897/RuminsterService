@@ -22,14 +22,11 @@ namespace RuminsterBackend.Services
 
         public async Task<LoginResponse> LoginAsync(PostLoginDto dto)
         {
-            Console.WriteLine("checking username " + dto.Username);
-            // Find the user by username
+            // Find the user by username or email
             var user = await _userManager.FindByNameAsync(dto.Username) ??
-                throw new AuthenticationException("Invalid username or password.");
+                       await _userManager.FindByEmailAsync(dto.Username) ??
+                       throw new AuthenticationException("Invalid username or password.");
 
-            Console.WriteLine("user id " + user.Id);
-
-            Console.WriteLine("checking password " + dto.Password);
             // Check if email is confirmed
             if (!await _userManager.IsEmailConfirmedAsync(user))
                 throw new AuthenticationException("Please confirm your email address before logging in.");
@@ -39,7 +36,6 @@ namespace RuminsterBackend.Services
             if (!isPasswordValid)
                 throw new AuthenticationException("Invalid username or password.");
 
-            Console.WriteLine("success");
             // Generate access and refresh tokens
             var accessToken = _tokenService.GenerateAccessToken(user.Id, await _userManager.GetRolesAsync(user));
             var refreshToken = _tokenService.GenerateRefreshToken();
