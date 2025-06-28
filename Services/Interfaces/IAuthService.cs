@@ -9,10 +9,16 @@ namespace RuminsterBackend.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<LoginResponse> SignUpAsync(PostSignUpDto dto);
-        
         Task<LoginResponse> LoginAsync(PostLoginDto dto);
 
         Task<TokenResponse> RefreshTokenAsync(PostRefreshTokenDto dto);
+
+        Task<string> SignUpAsync(PostSignUpDto dto);
+        
+        Task<string> ActivateAccountAsync(GetActivateDto dto);
+        
+        Task<string> SendPasswordResetEmailAsync(PostForgotPasswordDto dto);
+        
+        Task<string> ResetPasswordAsync(PostResetPasswordDto dto);
     }
 }

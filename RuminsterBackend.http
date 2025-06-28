@@ -1,6 +1,56 @@
-@RuminsterBackend_HostAddress = http://localhost:5159
+# Ruminster Backend API Tests
 
-GET {{RuminsterBackend_HostAddress}}/weatherforecast/
-Accept: application/json
+### Variables
+@baseUrl = https://localhost:7000/api
+@email = test@example.com
+@username = testuser
+@password = TestPassword123!
 
-###
+### 1. Sign Up (with Email Verification)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 2. Activate Account (replace token with actual token from email)
+GET {{baseUrl}}/auth/activate?token=your-actual-activation-token-here
+
+### 3. Login (should work after activation)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+### 4. Forgot Password
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "{{email}}"
+}
+
+### 5. Reset Password (replace token with actual token from email)
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "your-actual-reset-token-here",
+  "newPassword": "NewPassword123!",
+  "confirmPassword": "NewPassword123!"
+}
+
+### 6. Login with new password
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "NewPassword123!"
+}

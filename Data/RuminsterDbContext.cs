@@ -29,6 +29,8 @@ namespace RuminsterBackend.Data
 
         public DbSet<UserRelationLog> UserRelationLogs { get; set; }
 
+        public new DbSet<UserToken> UserTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -191,6 +193,23 @@ namespace RuminsterBackend.Data
                 .WithMany(s => s.Logs)
                 .HasForeignKey(s => s.UserRelationId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            var userTokenMb = modelBuilder.Entity<UserToken>();
+            userTokenMb.Property(s => s.Id).IsRequired();
+            userTokenMb.Property(s => s.UserId).IsRequired();
+            userTokenMb.Property(s => s.Token).IsRequired();
+            userTokenMb.Property(s => s.TokenType).IsRequired();
+            userTokenMb.Property(s => s.ExpiresAt).HasConversion(datetimeConverter);
+            userTokenMb.Property(s => s.CreatedAt).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            userTokenMb.Property(s => s.IsUsed).HasDefaultValue(false).IsRequired();
+
+            userTokenMb
+                .HasOne(s => s.User)
+                .WithMany(s => s.UserTokens)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            userTokenMb.HasIndex(s => s.Token).IsUnique();
         }
     }
 }

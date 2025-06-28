@@ -31,5 +31,7 @@ namespace RuminsterBackend.Models
         public ICollection<UserRelationLog> UserRelationLogsCreateBy { get; set; }
 
         public ICollection<RefreshToken> RefreshTokens { get; set; }
+
+        public ICollection<UserToken> UserTokens { get; set; }
     }
 }

@@ -69,6 +69,10 @@ builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IRuminationsService, RuminationsService>();
 builder.Services.AddTransient<IUserRelationsService, UserRelationsService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+// Configure Email Settings
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
