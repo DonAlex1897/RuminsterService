@@ -33,5 +33,7 @@ namespace RuminsterBackend.Models
         public ICollection<RefreshToken> RefreshTokens { get; set; }
 
         public ICollection<UserToken> UserTokens { get; set; }
+
+        public ICollection<UserTosAcceptance> TosAcceptances { get; set; }
     }
 }

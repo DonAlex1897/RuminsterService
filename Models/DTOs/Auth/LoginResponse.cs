@@ -12,5 +12,7 @@ namespace RuminsterBackend.Models.DTOs.Auth
         public required string RefreshToken { get; set; }
         public int ExpiresIn { get; set; }
         public required UserResponse User { get; set; }
+        public bool RequiresTosAcceptance { get; set; }
+        public string? LatestTosVersion { get; set; }
     }
 }

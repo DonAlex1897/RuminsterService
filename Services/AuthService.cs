@@ -13,12 +13,14 @@ namespace RuminsterBackend.Services
         IRequestContextService contextService,
         UserManager<User> userManager,
         ITokenService tokenService,
-        IEmailService emailService) : IAuthService
+        IEmailService emailService,
+        ITermsOfServiceService termsOfServiceService) : IAuthService
     {
         private readonly IRequestContextService _contextService = contextService;
         private readonly UserManager<User> _userManager = userManager;
         private readonly ITokenService _tokenService = tokenService;
         private readonly IEmailService _emailService = emailService;
+        private readonly ITermsOfServiceService _termsOfServiceService = termsOfServiceService;
 
         public async Task<LoginResponse> LoginAsync(PostLoginDto dto)
         {
@@ -52,6 +54,10 @@ namespace RuminsterBackend.Services
             await _contextService.Context.RefreshTokens.AddAsync(newRefreshTokenEntry);
             await _contextService.Context.SaveChangesAsync();
 
+            // Check TOS acceptance status
+            var hasAcceptedLatestTos = await _termsOfServiceService.HasUserAcceptedLatestTosAsync(user.Id);
+            var latestTos = await _termsOfServiceService.GetActiveTermsOfServiceAsync();
+
             // Return the login response
             return new LoginResponse
             {
@@ -63,7 +69,9 @@ namespace RuminsterBackend.Services
                     Id = user.Id,
                     Username = user.UserName!,
                     Email = user.Email ?? string.Empty,
-                }
+                },
+                RequiresTosAcceptance = !hasAcceptedLatestTos,
+                LatestTosVersion = latestTos?.Version
             };
         }
 
@@ -152,6 +160,25 @@ namespace RuminsterBackend.Services
 
             await _contextService.Context.UserTokens.AddAsync(userToken);
             await _contextService.Context.SaveChangesAsync();
+
+            // Record TOS acceptance
+            var activeTos = await _contextService.Context.TermsOfService
+                .Where(tos => tos.IsActive && tos.Version == dto.AcceptedTosVersion)
+                .FirstOrDefaultAsync();
+
+            if (activeTos != null)
+            {
+                var tosAcceptance = new UserTosAcceptance
+                {
+                    UserId = user.Id,
+                    AcceptedVersion = dto.AcceptedTosVersion,
+                    AcceptedAt = DateTime.UtcNow,
+                    TermsOfServiceId = activeTos.Id
+                };
+
+                await _contextService.Context.UserTosAcceptances.AddAsync(tosAcceptance);
+                await _contextService.Context.SaveChangesAsync();
+            }
 
             // Send activation email
             await _emailService.SendEmailVerificationAsync(user.Email!, user.UserName!, token);

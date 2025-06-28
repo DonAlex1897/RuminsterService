@@ -31,6 +31,10 @@ namespace RuminsterBackend.Data
 
         public new DbSet<UserToken> UserTokens { get; set; }
 
+        public DbSet<TermsOfService> TermsOfService { get; set; }
+
+        public DbSet<UserTosAcceptance> UserTosAcceptances { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -210,6 +214,32 @@ namespace RuminsterBackend.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             userTokenMb.HasIndex(s => s.Token).IsUnique();
+
+            var termsOfServiceMb = modelBuilder.Entity<TermsOfService>();
+            termsOfServiceMb.Property(s => s.Id).IsRequired();
+            termsOfServiceMb.Property(s => s.Version).IsRequired().HasMaxLength(50);
+            termsOfServiceMb.Property(s => s.Content).IsRequired();
+            termsOfServiceMb.Property(s => s.CreatedAt).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            termsOfServiceMb.Property(s => s.IsActive).HasDefaultValue(false).IsRequired();
+
+            var userTosAcceptanceMb = modelBuilder.Entity<UserTosAcceptance>();
+            userTosAcceptanceMb.Property(s => s.Id).IsRequired();
+            userTosAcceptanceMb.Property(s => s.UserId).IsRequired();
+            userTosAcceptanceMb.Property(s => s.TermsOfServiceId).IsRequired();
+            userTosAcceptanceMb.Property(s => s.AcceptedAt).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            userTosAcceptanceMb.Property(s => s.AcceptedVersion).IsRequired().HasMaxLength(50);
+
+            userTosAcceptanceMb
+                .HasOne(s => s.User)
+                .WithMany(s => s.TosAcceptances)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            userTosAcceptanceMb
+                .HasOne(s => s.TermsOfService)
+                .WithMany(s => s.UserAcceptances)
+                .HasForeignKey(s => s.TermsOfServiceId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
