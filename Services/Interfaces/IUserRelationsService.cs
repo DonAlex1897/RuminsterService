@@ -8,7 +8,7 @@ namespace RuminsterBackend.Services.Interfaces
 {
     public interface IUserRelationsService
     {
-        Task<List<UserRelationResponse>> GetUserRelationsAsync();
+        Task<List<UserRelationResponse>> GetUserRelationsAsync(GetUserRelationsQueryParams queryParams);
 
         Task<UserRelationResponse> GetUserRelationAsync(int userRelationId);
 

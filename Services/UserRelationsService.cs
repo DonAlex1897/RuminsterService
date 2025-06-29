@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 using RuminsterBackend.Data;
 using RuminsterBackend.Exceptions;
 using RuminsterBackend.Models;
@@ -36,14 +37,80 @@ namespace RuminsterBackend.Services
             };
         }
 
-        public async Task<List<UserRelationResponse>> GetUserRelationsAsync()
+        public async Task<List<UserRelationResponse>> GetUserRelationsAsync(GetUserRelationsQueryParams queryParams)
         {
-            var userRelations = await _context.UserRelations
+            var userRelationsQuery = _context.UserRelations
                 .Include(q => q.Initiator)
                 .Include(q => q.Receiver)
-                .Where(q => q.InitiatorId == _user.Id || q.ReceiverId == _user.Id)
-                .Where(q => !q.IsDeleted)
-                .ToListAsync();
+                .AsNoTracking()
+                .AsQueryable();
+            
+            if (queryParams.Id != null && queryParams.Id.Count > 0)
+            {
+                userRelationsQuery = userRelationsQuery.Where(q => queryParams.Id.Contains(q.Id));
+            }
+
+            if (queryParams.UserId != null)
+            {
+                if (queryParams.WithMe.HasValue && queryParams.WithMe.Value)
+                {
+                    userRelationsQuery = userRelationsQuery
+                        .Where(q =>
+                            (q.InitiatorId == queryParams.UserId && q.ReceiverId == _user.Id) ||
+                            (q.ReceiverId == queryParams.UserId && q.InitiatorId == _user.Id));
+                }
+                else
+                {
+                    userRelationsQuery = userRelationsQuery.Where(q => q.InitiatorId == queryParams.UserId || q.ReceiverId == queryParams.UserId);
+                }
+            }
+
+            if (queryParams.FromTMS.HasValue)
+            {
+                userRelationsQuery = userRelationsQuery.Where(q => q.CreateTMS >= queryParams.FromTMS.Value);
+            }
+
+            if (queryParams.ToTMS.HasValue)
+            {
+                userRelationsQuery = userRelationsQuery.Where(q => q.CreateTMS <= queryParams.ToTMS.Value);
+            }
+
+            if (!queryParams.IncludeDeleted.HasValue || !queryParams.IncludeDeleted.Value)
+            {
+                userRelationsQuery = userRelationsQuery.Where(q => !q.IsDeleted);
+            }
+
+            // Sort
+            if (!string.IsNullOrEmpty(queryParams.Sort))
+            {
+                try
+                {
+                    userRelationsQuery = userRelationsQuery.OrderBy(queryParams.Sort);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error: Invalid sort parameter.\n" + e);
+                }
+            }
+            else
+            {
+                userRelationsQuery = userRelationsQuery
+                    .OrderByDescending(q => q.UpdateTMS);  // Default sort
+            }
+
+            if (queryParams.Offset != null)
+            {
+                userRelationsQuery = userRelationsQuery
+                    .Skip(queryParams.Offset.Value);
+            }
+
+            if (queryParams.Limit != null)
+            {
+                userRelationsQuery = userRelationsQuery
+                    .Take(queryParams.Limit.Value);
+            }
+
+            var userRelations = await userRelationsQuery.ToListAsync();
 
             return [.. userRelations.Select(UserRelationMapper.MapUserRelationResponse)];
         }
@@ -66,9 +133,10 @@ namespace RuminsterBackend.Services
             var userRelation = await _context.UserRelations
                 .Where(q => !q.IsDeleted)
                 .Where(q => !q.IsRejected)
-                .Where(q => 
-                    (q.InitiatorId == _user.Id && q.ReceiverId == dto.UserId) || 
+                .Where(q =>
+                    (q.InitiatorId == _user.Id && q.ReceiverId == dto.UserId) ||
                     (q.InitiatorId == dto.UserId && q.ReceiverId == _user.Id))
+                .Where(q => q.Type == dto.RelationType)
                 .FirstOrDefaultAsync();
             
             if (userRelation != default)

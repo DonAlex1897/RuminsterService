@@ -22,9 +22,9 @@ namespace RuminsterBackend.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<UserRelationResponse>>> GetUserRelationsAsync()
+        public async Task<ActionResult<List<UserRelationResponse>>> GetUserRelationsAsync([FromQuery] GetUserRelationsQueryParams queryParams)
         {
-            var response = await _userRelationsService.GetUserRelationsAsync();
+            var response = await _userRelationsService.GetUserRelationsAsync(queryParams);
             return Ok(response);
         }
 
