@@ -71,6 +71,7 @@ builder.Services.AddTransient<IRuminationsService, RuminationsService>();
 builder.Services.AddTransient<IUserRelationsService, UserRelationsService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<ITermsOfServiceService, TermsOfServiceService>();
+builder.Services.AddTransient<ICommentsService, CommentsService>();
 
 // Configure Email Settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

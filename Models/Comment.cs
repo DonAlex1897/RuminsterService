@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace RuminsterBackend.Models
 {
-    public class Rumination
+    public class Comment
     {
         public int Id { get; set; }
 
@@ -10,7 +10,13 @@ namespace RuminsterBackend.Models
 
         public string Content { get; set; }
 
-        public bool IsPublished { get; set; }
+        public int? RuminationId { get; set; }
+
+        public Rumination? Rumination { get; set; }
+
+        public int? ParentCommentId { get; set; }
+
+        public Comment? ParentComment { get; set; }
 
         public string CreateById { get; set; }
 
@@ -24,10 +30,6 @@ namespace RuminsterBackend.Models
 
         public DateTime UpdateTMS { get; set; }
 
-        public ICollection<RuminationAudience> Audiences { get; set; }
-
-        public ICollection<RuminationLog> Logs { get; set; }
-
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment> ChildComments { get; set; }
     }
 }

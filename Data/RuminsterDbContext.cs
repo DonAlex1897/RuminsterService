@@ -35,6 +35,8 @@ namespace RuminsterBackend.Data
 
         public DbSet<UserTosAcceptance> UserTosAcceptances { get; set; }
 
+        public DbSet<Comment> Comments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -240,6 +242,38 @@ namespace RuminsterBackend.Data
                 .WithMany(s => s.UserAcceptances)
                 .HasForeignKey(s => s.TermsOfServiceId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            var commentMb = modelBuilder.Entity<Comment>();
+            commentMb.Property(s => s.Id).IsRequired();
+            commentMb.Property(s => s.IsDeleted).HasDefaultValue(false).IsRequired();
+            commentMb.Property(s => s.Content).IsRequired();
+            commentMb.Property(s => s.RuminationId);
+            commentMb.Property(s => s.ParentCommentId);
+            commentMb.Property(s => s.CreateById).IsRequired();
+            commentMb.Property(s => s.UpdateById).IsRequired();
+            commentMb.Property(s => s.CreateTMS).HasConversion(datetimeConverter).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            commentMb.Property(s => s.UpdateTMS).HasConversion(datetimeConverter);
+
+            commentMb
+                .HasOne(s => s.CreateBy)
+                .WithMany(s => s.CommentsCreateBy)
+                .HasForeignKey(s => s.CreateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            commentMb
+                .HasOne(s => s.UpdateBy)
+                .WithMany(s => s.CommentsUpdateBy)
+                .HasForeignKey(s => s.UpdateById)
+                .OnDelete(DeleteBehavior.Restrict);
+            commentMb
+                .HasOne(s => s.Rumination)
+                .WithMany(s => s.Comments)
+                .HasForeignKey(s => s.RuminationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            commentMb
+                .HasOne(s => s.ParentComment)
+                .WithMany(s => s.ChildComments)
+                .HasForeignKey(s => s.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

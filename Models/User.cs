@@ -35,5 +35,9 @@ namespace RuminsterBackend.Models
         public ICollection<UserToken> UserTokens { get; set; }
 
         public ICollection<UserTosAcceptance> TosAcceptances { get; set; }
+
+        public ICollection<Comment> CommentsCreateBy { get; set; }
+
+        public ICollection<Comment> CommentsUpdateBy { get; set; }
     }
 }
