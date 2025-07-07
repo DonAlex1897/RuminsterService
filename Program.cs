@@ -114,7 +114,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Initialize roles (if they don't exist)
+// Initialize roles and test data (if they don't exist)
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<RuminsterDbContext>();
@@ -122,6 +122,13 @@ using (var scope = app.Services.CreateScope())
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
     await RoleInitializer.InitializeRoles(roleManager);
+
+    // Initialize test data in development environment
+    if (app.Environment.IsDevelopment())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        await TestDataInitializer.InitializeTestData(context, userManager);
+    }
 }
 
 app.UseRouting();
