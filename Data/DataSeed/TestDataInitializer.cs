@@ -106,6 +106,10 @@ namespace RuminsterBackend.Data.DataSeed
             // Remove users using UserManager
             foreach (var user in testUsers)
             {
+                var refreshTokens = await context.RefreshTokens
+                    .Where(ut => ut.UserId == user.Id)
+                    .ToListAsync();
+                context.RefreshTokens.RemoveRange(refreshTokens);
                 await userManager.DeleteAsync(user);
             }
 
