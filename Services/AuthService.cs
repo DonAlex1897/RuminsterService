@@ -77,18 +77,21 @@ namespace RuminsterBackend.Services
 
         public async Task<TokenResponse> RefreshTokenAsync(PostRefreshTokenDto dto)
         {
-
-            var user = await _userManager.FindByIdAsync(dto.UserId) ??
-                throw new NotFoundException(dto.UserId + " is not a valid user id.");
-
-            // Validate token
+            // Validate token - first find the refresh token to get the user ID
             var savedToken = await _contextService.Context.RefreshTokens
-                .FirstOrDefaultAsync(t => t.Token == dto.RefreshToken && t.UserId == user.Id);
+                .FirstOrDefaultAsync(t => t.Token == dto.RefreshToken);
             if (savedToken == null || savedToken.ExpiresAt < DateTime.UtcNow || savedToken.IsRevoked)
-                throw new AuthenticationException($"User ({user.UserName}) is not authenticated.");
+                throw new AuthenticationException("Invalid or expired refresh token.");
+
+            var userId = savedToken.UserId;
+
+            // Get the user
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new AuthenticationException("User not found.");
 
             // Generate new tokens
-            var newAccessToken = _tokenService.GenerateAccessToken(user.Id, await _userManager.GetRolesAsync(user));
+            var newAccessToken = _tokenService.GenerateAccessToken(userId, await _userManager.GetRolesAsync(user));
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             // Update token in database
@@ -107,7 +110,8 @@ namespace RuminsterBackend.Services
             return new TokenResponse
             {
                 AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken
+                RefreshToken = newRefreshToken,
+                ExpiresIn = _tokenService.GetAccessTokenExpiry()
             };
         }
 
