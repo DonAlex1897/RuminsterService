@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15
+    image: postgres:16
     container_name: ruminster-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ruminster
-      POSTGRES_USER: ruminster_user
+      POSTGRES_USER: amin
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
@@ -18,10 +18,10 @@ services:
     networks:
       - ruminster-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ruminster_user -d ruminster"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "pg_isready -U amin -d ruminster"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   app:
     build:
@@ -29,33 +29,43 @@ services:
       dockerfile: Dockerfile
     container_name: ruminster-app
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=ruminster;Username=ruminster_user;Password=${POSTGRES_PASSWORD}
-      - JwtSettings__SecretKey=${JWT_SECRET_KEY}
-      - JwtSettings__Issuer=${JWT_ISSUER}
-      - JwtSettings__Audience=${JWT_AUDIENCE}
-      - EmailSettings__SmtpHost=${SMTP_HOST}
-      - EmailSettings__SmtpPort=${SMTP_PORT}
-      - EmailSettings__Username=${SMTP_USERNAME}
-      - EmailSettings__Password=${SMTP_PASSWORD}
-      - EmailSettings__FromEmail=${FROM_EMAIL}
-      - EmailSettings__FromName=${FROM_NAME}
-      - EmailSettings__BaseUrl=${BASE_URL}
-    ports:
-      - "5000:80"
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=ruminster;Username=amin;Password=${POSTGRES_PASSWORD};Pooling=true
     depends_on:
       postgres:
         condition: service_healthy
+    expose:
+      - "8080"
     networks:
       - ruminster-network
     volumes:
       - app_logs:/app/logs
 
+  caddy:
+    image: caddy:2
+    container_name: ruminster-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - ruminster-network
+
 volumes:
   postgres_data:
   app_logs:
+  caddy_data:
+  caddy_config:
 
 networks:
   ruminster-network:
