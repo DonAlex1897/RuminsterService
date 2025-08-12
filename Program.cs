@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? string.Empty);
@@ -160,6 +161,8 @@ app.MapControllers();
 //     AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme,
 //     Roles="Admin,Member,Moderator",
 // });
+
+app.MapHealthChecks("/health");
 
 app.Run();
 
