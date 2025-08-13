@@ -12,6 +12,8 @@ namespace RuminsterBackend.Services.Interfaces
 
         Task<List<UserResponse>> GetUsersAsync(GetUsersQueryParams queryParams);
 
+        Task<UserResponse> GetUserByIdAsync(string userId);
+
         Task<UserResponse> PostUserRolesAsync(PostUserRolesDto dto);
     }
 }

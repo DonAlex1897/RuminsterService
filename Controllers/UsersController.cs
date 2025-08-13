@@ -23,6 +23,13 @@ namespace RuminsterBackend.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserResponse>> GetUserById(string id)
+        {
+            var user = await _usersService.GetUserByIdAsync(id);
+            return Ok(user);
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("UserRoles")]
         public async Task<ActionResult<UserResponse>> PostUserRolesAsync([FromBody] PostUserRolesDto dto)

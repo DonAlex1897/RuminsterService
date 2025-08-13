@@ -67,6 +67,26 @@ namespace RuminsterBackend.Services
             return userResponses;
         }
 
+        public async Task<UserResponse> GetUserByIdAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId)
+                ?? throw new NotFoundException($"User with ID '{userId}' not found.");
+
+            // Get user roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Create and return the UserResponse DTO with roles
+            var userResponse = new UserResponse
+            {
+                Id = user.Id,
+                Username = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Roles = [.. roles],
+            };
+
+            return userResponse;
+        }
+
         public async Task<UserResponse> PostUserRolesAsync(PostUserRolesDto dto)
         {
             var currentUser = await this.GetCurrentUserAsync();
