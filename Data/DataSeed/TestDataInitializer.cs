@@ -131,6 +131,7 @@ namespace RuminsterBackend.Data.DataSeed
                 {
                     UserName = username,
                     Email = email,
+                    Name = $"{firstName} {lastName}",
                     EmailConfirmed = true
                 };
 

@@ -8,6 +8,8 @@ namespace RuminsterBackend.Models
 {
     public class User : IdentityUser
     {
+        public string? Name { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; }
 
         public ICollection<Rumination> RuminationsCreateBy { get; set; }

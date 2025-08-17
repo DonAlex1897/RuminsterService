@@ -69,6 +69,7 @@ namespace RuminsterBackend.Services
                     Id = user.Id,
                     Username = user.UserName!,
                     Email = user.Email ?? string.Empty,
+                    Name = user.Name,
                 },
                 RequiresTosAcceptance = !hasAcceptedLatestTos,
                 LatestTosVersion = latestTos?.Version
@@ -129,6 +130,7 @@ namespace RuminsterBackend.Services
             {
                 UserName = dto.Username,
                 Email = dto.Email,
+                Name = dto.Name,
                 EmailConfirmed = false
             };
 

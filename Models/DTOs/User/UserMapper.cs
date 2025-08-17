@@ -11,6 +11,7 @@ namespace RuminsterBackend.Models.DTOs.User
                 Id = user.Id,
                 Email = user.Email ?? string.Empty,
                 Username = user.UserName ?? string.Empty,
+                Name = user.Name,
                 Roles = user.UserRoles?.Select(ur => ur.Role?.Name ?? string.Empty).ToList() ?? [],
             };
         }

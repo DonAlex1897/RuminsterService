@@ -42,6 +42,7 @@ namespace RuminsterBackend.Services
                 Id = user.Id,
                 Username = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
+                Name = user.Name,
                 Roles = [.. roles],
             };
 
@@ -81,6 +82,7 @@ namespace RuminsterBackend.Services
                 Id = user.Id,
                 Username = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
+                Name = user.Name,
                 Roles = [.. roles],
             };
 
@@ -120,6 +122,7 @@ namespace RuminsterBackend.Services
                 Id = user.Id,
                 Username = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
+                Name = user.Name,
                 Roles = [.. roles],
             };
 
