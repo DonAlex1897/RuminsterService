@@ -16,6 +16,8 @@ namespace RuminsterBackend.Services.Interfaces
 
         Task<UserResponse> PostUserRolesAsync(PostUserRolesDto dto);
 
-    Task<UserResponse> PutUserNameAsync(PutUserNameDto dto);
+        Task<UserResponse> PutUserNameAsync(PutUserNameDto dto);
+
+        Task<List<UserResponse>> SearchUsersAsync(string query, int? limit = 10, int? offset = null);
     }
 }

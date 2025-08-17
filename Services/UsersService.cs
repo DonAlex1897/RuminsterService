@@ -11,12 +11,14 @@ namespace RuminsterBackend.Services
     public class UsersService(
         UserManager<User> userManager,
         IHttpContextAccessor httpContextAccessor,
-        RuminsterDbContext context
+        RuminsterDbContext context,
+        ITextSearchService textSearchService
     ) : IUsersService
     {
         private readonly UserManager<User> _userManager = userManager;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly RuminsterDbContext _context = context;
+        private readonly ITextSearchService _textSearchService = textSearchService;
 
         public async Task<UserResponse> GetCurrentUserAsync()
         {
@@ -173,6 +175,29 @@ namespace RuminsterBackend.Services
                 Name = user.Name,
                 Roles = [.. roles],
             };
+        }
+
+        public async Task<List<UserResponse>> SearchUsersAsync(string query, int? limit = 10, int? offset = null)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return new List<UserResponse>();
+            }
+
+            var usersBase = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .AsQueryable();
+
+            var usersFiltered = _textSearchService.ApplyContainsFilter(usersBase, query, u => u.UserName!, u => u.Name);
+            // Ensure deterministic ordering before Skip/Take to avoid EF warning and unstable pages
+            usersFiltered = usersFiltered
+                .OrderBy(u => u.UserName)
+                .ThenBy(u => u.Id);
+            usersFiltered = _textSearchService.ApplyPagination(usersFiltered, offset, limit, 50);
+
+            var users = await usersFiltered.ToListAsync();
+            return users.Select(UserMapper.MapUserResponse).ToList();
         }
     }
 }

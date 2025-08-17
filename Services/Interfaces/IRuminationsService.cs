@@ -26,5 +26,7 @@ namespace RuminsterBackend.Services.Interfaces
         Task<RuminationResponse> PutRuminationAudiencesAsync(int ruminationId, PutRuminationAudiencesDto dto);
 
         Task<RuminationResponse> PutRuminationAsync(int ruminationId, PutRuminationDto dto);
+
+        Task<List<RuminationResponse>> SearchAccessibleRuminationsAsync(string query, int? limit = 10, int? offset = null);
     }
 }

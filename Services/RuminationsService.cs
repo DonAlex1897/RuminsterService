@@ -15,10 +15,13 @@ using RuminsterBackend.Services.Interfaces;
 namespace RuminsterBackend.Services
 {
     public class RuminationsService(
-        IRequestContextService requestContextService
+        IRequestContextService requestContextService,
+        ITextSearchService textSearchService
     ) : IRuminationsService
     {
         private readonly IRequestContextService _requestContextService = requestContextService;
+        
+        private readonly ITextSearchService _textSearchService = textSearchService;
 
         private readonly DateTime _currentTime = requestContextService.Time;
 
@@ -452,6 +455,52 @@ namespace RuminsterBackend.Services
             
             var ruminationResponse = RuminationMapper.MapRuminationResponse(rumination); 
             return ruminationResponse;
+        }
+
+        public async Task<List<RuminationResponse>> SearchAccessibleRuminationsAsync(string query, int? limit = 10, int? offset = null)
+        {
+            var q = _textSearchService.Normalize(query);
+            if (string.IsNullOrWhiteSpace(q))
+            {
+                return new List<RuminationResponse>();
+            }
+
+            var ruminationsQuery = _requestContextService.Context.Ruminations
+                .Include(q => q.Logs)
+                .Include(q => q.Audiences)
+                .Include(q => q.CreateBy)
+                .Include(q => q.UpdateBy)
+                .Where(r => r.IsPublished)
+                .Where(r => !r.IsDeleted)
+                .AsNoTracking()
+                .AsQueryable();
+
+            // Access gating for feed-like visibility (same as GetRuminationsAsync with IsPublic=false)
+            var relatedUserIdsQuery = _requestContextService.Context.UserRelations
+                .Where(ur => (ur.ReceiverId == _requestContextService.User.Id || ur.InitiatorId == _requestContextService.User.Id)
+                             && ur.IsAccepted && !ur.IsDeleted)
+                .Select(ur => new
+                {
+                    UserId = ur.InitiatorId != _requestContextService.User.Id ? ur.InitiatorId : ur.ReceiverId,
+                    RelationType = ur.Type
+                });
+
+            ruminationsQuery = ruminationsQuery.Where(r =>
+                r.Audiences.Any(a => !a.IsDeleted &&
+                    relatedUserIdsQuery.Any(ru => ru.UserId == r.CreateById && ru.RelationType == a.RelationType))
+            );
+
+            // Text search on content
+            ruminationsQuery = _textSearchService.ApplyContainsFilter(ruminationsQuery, q, r => r.Content);
+
+            // Sort fresh first
+            ruminationsQuery = ruminationsQuery.OrderByDescending(r => r.UpdateTMS);
+
+            // Pagination
+            ruminationsQuery = _textSearchService.ApplyPagination(ruminationsQuery, offset, limit, 50);
+
+            var ruminations = await ruminationsQuery.ToListAsync();
+            return ruminations.Select(RuminationMapper.MapRuminationResponse).ToList();
         }
     }
 }
