@@ -17,9 +17,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHealthChecks();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? string.Empty);
+var secretKeyString = jwtSettings["SecretKey"] ?? string.Empty;
+// Enforce presence and minimum length for JWT secret to avoid weak keys
+if (string.IsNullOrWhiteSpace(secretKeyString) || secretKeyString.Length < 32)
+{
+    throw new InvalidOperationException("JwtSettings:SecretKey must be set and at least 32 characters long.");
+}
+var secretKey = Encoding.UTF8.GetBytes(secretKeyString);
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+if (allowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException("Cors:AllowedOrigins must contain at least one origin");
+}
 
 builder.Services.AddCors(options =>
 {
@@ -53,6 +63,8 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(secretKey),
             RoleClaimType = ClaimTypes.Role,
+            // Eliminate default clock skew to tighten token validation window
+            ClockSkew = TimeSpan.Zero,
         };
     });
 
@@ -152,6 +164,16 @@ if (app.Environment.IsDevelopment())
 // Only use HTTPS redirection in production
 if (!app.Environment.IsDevelopment())
 {
+    // Add HSTS and basic security headers in production
+    app.UseHsts();
+    app.Use(async (context, next) =>
+    {
+        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+        context.Response.Headers["X-Frame-Options"] = "DENY";
+        context.Response.Headers["Referrer-Policy"] = "no-referrer";
+        context.Response.Headers["X-XSS-Protection"] = "0"; // modern browsers ignore this; CSP is preferred
+        await next();
+    });
     app.UseHttpsRedirection();
 }
 

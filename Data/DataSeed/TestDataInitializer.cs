@@ -55,7 +55,7 @@ namespace RuminsterBackend.Data.DataSeed
             int relationCount = 30)
         {
             // Check if test data already exists
-            if (await context.Users.AnyAsync(u => u.UserName.StartsWith("testuser")))
+            if (await context.Users.AnyAsync(u => u.UserName != null && u.UserName.StartsWith("testuser")))
             {
                 Console.WriteLine("Test data already exists. Clearing existing test data first...");
                 await ClearTestData(context, userManager);
@@ -80,7 +80,7 @@ namespace RuminsterBackend.Data.DataSeed
             Console.WriteLine("Clearing existing test data...");
 
             // Remove related data first (due to foreign key constraints)
-            var testUsers = await context.Users.Where(u => u.UserName.StartsWith("testuser")).ToListAsync();
+            var testUsers = await context.Users.Where(u => u.UserName != null && u.UserName.StartsWith("testuser")).ToListAsync();
             var testUserIds = testUsers.Select(u => u.Id).ToList();
 
             // Remove rumination audiences

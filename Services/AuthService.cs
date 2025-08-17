@@ -48,7 +48,7 @@ namespace RuminsterBackend.Services
             {
                 Token = refreshToken,
                 UserId = user.Id,
-                ExpiresAt = DateTime.UtcNow.AddDays(7)
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
             await _contextService.Context.RefreshTokens.AddAsync(newRefreshTokenEntry);
@@ -99,7 +99,7 @@ namespace RuminsterBackend.Services
             {
                 Token = newRefreshToken,
                 UserId = user.Id,
-                ExpiresAt = DateTime.UtcNow.AddDays(7)
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
             savedToken.IsRevoked = true;

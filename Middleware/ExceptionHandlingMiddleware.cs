@@ -55,7 +55,8 @@ namespace RuminsterBackend.Middleware
             {
                 _logger.LogError(ex, "An unexpected error occurred.");
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsJsonAsync(new { Error = $"An unexpected error occurred: {ex.Message}" });
+                // Avoid leaking internal error details
+                await context.Response.WriteAsJsonAsync(new { Error = "An unexpected error occurred." });
             }
         }
     }

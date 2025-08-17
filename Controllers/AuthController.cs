@@ -17,6 +17,7 @@ namespace RuminsterBackend.Controllers
         private readonly IAuthService _authService = authService;
         private readonly IUsersService _usersService = usersService;
 
+        [Authorize]
         [HttpGet("me")]
         public async Task<ActionResult<UserResponse>> GetCurrentUserAsync()
         {
