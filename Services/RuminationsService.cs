@@ -20,7 +20,7 @@ namespace RuminsterBackend.Services
     ) : IRuminationsService
     {
         private readonly IRequestContextService _requestContextService = requestContextService;
-        
+
         private readonly ITextSearchService _textSearchService = textSearchService;
 
         private readonly DateTime _currentTime = requestContextService.Time;
@@ -473,6 +473,7 @@ namespace RuminsterBackend.Services
                 .Where(r => r.IsPublished)
                 .Where(r => !r.IsDeleted)
                 .AsNoTracking()
+                .AsSplitQuery()
                 .AsQueryable();
 
             // Access gating for feed-like visibility (same as GetRuminationsAsync with IsPublic=false)
@@ -486,6 +487,10 @@ namespace RuminsterBackend.Services
                 });
 
             ruminationsQuery = ruminationsQuery.Where(r =>
+                // Public ruminations: no non-deleted audiences
+                !r.Audiences.Any(a => !a.IsDeleted)
+                ||
+                // Feed-visible ruminations: at least one audience matching a relation
                 r.Audiences.Any(a => !a.IsDeleted &&
                     relatedUserIdsQuery.Any(ru => ru.UserId == r.CreateById && ru.RelationType == a.RelationType))
             );
