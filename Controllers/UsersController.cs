@@ -39,5 +39,14 @@ namespace RuminsterBackend.Controllers
             await transaction.CommitAsync();
             return Ok(response);
         }
+
+        [HttpPut("me/name")]
+        public async Task<ActionResult<UserResponse>> PutMyNameAsync([FromBody] PutUserNameDto dto)
+        {
+            using var transaction = await _contextService.Context.Database.BeginTransactionAsync();
+            var response = await _usersService.PutUserNameAsync(dto);
+            await transaction.CommitAsync();
+            return Ok(response);
+        }
     }
 }

@@ -15,5 +15,7 @@ namespace RuminsterBackend.Services.Interfaces
         Task<UserResponse> GetUserByIdAsync(string userId);
 
         Task<UserResponse> PostUserRolesAsync(PostUserRolesDto dto);
+
+    Task<UserResponse> PutUserNameAsync(PutUserNameDto dto);
     }
 }

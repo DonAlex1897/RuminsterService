@@ -128,5 +128,51 @@ namespace RuminsterBackend.Services
 
             return userResponse;
         }
+
+        public async Task<UserResponse> PutUserNameAsync(PutUserNameDto dto)
+        {
+            var httpContext = _httpContextAccessor.HttpContext
+                ?? throw new UnauthorizedAccessException("No active user session.");
+
+            var currentUser = httpContext.User;
+            if (currentUser == null || !(currentUser.Identity?.IsAuthenticated ?? false))
+            {
+                throw new AuthenticationException("User not authenticated");
+            }
+
+            var user = await _userManager.GetUserAsync(currentUser)
+                ?? throw new NotFoundException("User not found");
+
+            var newName = dto.Name?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(newName))
+            {
+                throw new ValidationException("Name cannot be empty.");
+            }
+
+            // Optional: basic length guard; database uses text so no strict limit, but cap to something reasonable
+            if (newName.Length > 200)
+            {
+                throw new ValidationException("Name is too long (max 200 characters).");
+            }
+
+            user.Name = newName;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new IdentityOperationException("Failed to update user name.", result.Errors);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new UserResponse
+            {
+                Id = user.Id,
+                Username = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Name = user.Name,
+                Roles = [.. roles],
+            };
+        }
     }
 }
