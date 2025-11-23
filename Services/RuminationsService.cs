@@ -27,20 +27,6 @@ namespace RuminsterBackend.Services
 
         private readonly RuminsterDbContext _context = requestContextService.Context;
 
-        public static RuminationLog MapToLog(Rumination rumination, string callerMethod)
-        {
-            return new RuminationLog
-            {
-                RuminationId = rumination.Id,
-                IsDeleted = rumination.IsDeleted,
-                Content = rumination.Content,
-                IsPublished = rumination.IsPublished,
-                CallerMethod = callerMethod,
-                CreateById = rumination.UpdateById,
-                CreateTMS = rumination.UpdateTMS,
-            };
-        }
-
         public async Task<List<RuminationResponse>> GetRuminationsAsync(GetRuminationsQueryParams queryParams)
         {
             var ruminationsQuery = _context.Ruminations
@@ -264,7 +250,6 @@ namespace RuminsterBackend.Services
                 UpdateTMS = _currentTime,
             };
 
-            newRumination.Logs.Add(MapToLog(newRumination, "PostRuminationAsync"));
             await _context.Ruminations.AddAsync(newRumination);
             await _context.SaveChangesAsync();
 
@@ -292,7 +277,6 @@ namespace RuminsterBackend.Services
             rumination.Content = dto.Content;
             rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
-            rumination.Logs.Add(MapToLog(rumination, "PutRuminationContentAsync"));
             _context.Ruminations.Update(rumination);
             await _context.SaveChangesAsync();
 
@@ -320,7 +304,6 @@ namespace RuminsterBackend.Services
             rumination.IsPublished = !rumination.IsPublished;
             rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
-            rumination.Logs.Add(MapToLog(rumination, "PutRuminationVisibilityAsync"));
             _context.Ruminations.Update(rumination);
             await _context.SaveChangesAsync();
 
@@ -347,7 +330,6 @@ namespace RuminsterBackend.Services
             rumination.IsDeleted = true;
             rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
-            rumination.Logs.Add(MapToLog(rumination, "DeleteRuminationAsync"));
             _context.Ruminations.Update(rumination);
             await _context.SaveChangesAsync();
         }
@@ -394,7 +376,6 @@ namespace RuminsterBackend.Services
 
             rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
-            rumination.Logs.Add(MapToLog(rumination, "PutRuminationAudiencesAsync"));
             _context.Ruminations.Update(rumination);
             await _context.SaveChangesAsync();
             
@@ -449,7 +430,6 @@ namespace RuminsterBackend.Services
 
             rumination.UpdateById = _requestContextService.User.Id;
             rumination.UpdateTMS = _currentTime;
-            rumination.Logs.Add(MapToLog(rumination, "PutRuminationAsync"));
             _context.Ruminations.Update(rumination);
             await _context.SaveChangesAsync();
             

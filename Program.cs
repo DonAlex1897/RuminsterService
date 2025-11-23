@@ -74,7 +74,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<RuminsterDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .UseSnakeCaseNamingConvention());
+           .UseSnakeCaseNamingConvention()
+           .AddInterceptors(new RuminsterBackend.Interceptors.EntityLoggingInterceptor()));
 
 builder.Services.AddScoped<IRequestContextService, RequestContextService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
